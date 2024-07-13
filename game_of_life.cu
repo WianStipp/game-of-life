@@ -24,21 +24,34 @@ int cuda_test(void) {
 
 
 int count_neighbors(int a[NUM_ROWS][NUM_COLS], int x, int y) {
-    int i,j,sum;
+    int i,j;
+    int sum = 0;
     for (i=-1;i<2;i++) {
         for (j=-1;j<2;j++) {
-            sum = sum + a[MIN(NUM_ROWS,MAX(0,x+i))][MIN(NUM_COLS,MAX(0,y+j))];
+            if ((x+i >= 0) & (x+i < NUM_ROWS) & (y+j >= 0) & (y+j<NUM_COLS)) {
+                sum = sum + a[x+i][y+j];
+            }
         }
     }
     return sum - a[x][y];
 }
 
-void update_state(int a[NUM_ROWS][NUM_COLS]) {
-    int next_state[NUM_ROWS][NUM_COLS];
-    int x, y;
+void update_next_state(int a[NUM_ROWS][NUM_COLS], int next_state[NUM_ROWS][NUM_COLS]) {
+    int x, y, num_neighbors;
     for (x=0;x<NUM_ROWS;x++) {
         for (y=0;y<NUM_COLS;y++) {
-            printf("Num neighbors: %d\n", count_neighbors(a, x, y));
+            // printf("(%d, %d)\n", x,y);
+            // printf("Num neighbors: %d\n", count_neighbors(a, x, y));
+            num_neighbors = count_neighbors(a, x, y);
+            if (num_neighbors < 2) {
+                next_state[x][y] = 0;
+            }
+            else if (num_neighbors == 3) {
+                next_state[x][y] = 1;
+            }
+            else {
+                next_state[x][y] = a[x][y];
+            }
         }
     }
 }
@@ -69,13 +82,29 @@ void render_state(int a[NUM_ROWS][NUM_COLS]) {
     }
 }
 
+void set_state_as_next(int a[NUM_ROWS][NUM_COLS], int b[NUM_ROWS][NUM_COLS]) {
+    int i,j;
+    for (i=0;i<NUM_ROWS;i++) {
+        for (j=0;j<NUM_COLS;j++) {
+            a[i][j] = b[i][j];
+        }
+    }
+}
+
 
 int main(void) {
     int state[NUM_ROWS][NUM_COLS];
+    int next_state[NUM_ROWS][NUM_COLS];
+    int i;
 
     set_blank_state(state);
-    // set_blinker(state);
+    set_blinker(state);
     render_state(state);
-    update_state(state);
+    for (i=0;i<10;i++) {
+        update_next_state(state, next_state);
+        render_state(next_state);
+        set_state_as_next(state, next_state);
+        printf("\n");
+    }
     return 0;
 }
