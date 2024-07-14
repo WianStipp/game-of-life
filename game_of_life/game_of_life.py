@@ -14,7 +14,6 @@ N_COLS = 20
 DELAY = 0.1
 
 import numpy as np
-import sys
 import time
 
 
@@ -66,7 +65,7 @@ def main() -> None:
     start = time.monotonic()
     for _ in range(1000):
         state = get_next_state(state)
-        # render_state(state)
+        render_state(state)
         # time.sleep(DELAY)
     end = time.monotonic()
     print(f"Simulation took {end-start} seconds.")
