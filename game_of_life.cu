@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 
 #define GRID_SIZE 10
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
@@ -36,10 +37,18 @@ void update_next_state(int a[][GRID_SIZE], int next_state[][GRID_SIZE]) {
 }
 
 
-void set_blinker(int a[GRID_SIZE][GRID_SIZE]) {
-    a[5][4] = 1;
-    a[5][5] = 1;
-    a[5][6] = 1;
+void set_blinker(int state[GRID_SIZE][GRID_SIZE]) {
+    state[5][4] = 1;
+    state[5][5] = 1;
+    state[5][6] = 1;
+}
+
+void set_interesting_state(int state[GRID_SIZE][GRID_SIZE]) {
+    state[5][5] = 1;
+    state[5][6] = 1;
+    state[6][5] = 1;
+    state[5][7] = 1;
+    state[4][6] = 1;
 }
 
 void set_blank_state(int a[GRID_SIZE][GRID_SIZE]) {
@@ -73,6 +82,7 @@ void set_state_as_next(int a[GRID_SIZE][GRID_SIZE], int b[GRID_SIZE][GRID_SIZE])
 
 int main(void) {
     int i;
+    float start_time, end_time;
     int state[GRID_SIZE][GRID_SIZE];
     int next_state[GRID_SIZE][GRID_SIZE];
     dim3 grid(GRID_SIZE, GRID_SIZE);
@@ -85,11 +95,16 @@ int main(void) {
     cudaMalloc((void**) &dev_next_state, sizeof(int)*GRID_SIZE*GRID_SIZE);
 
     cudaMemcpy(dev_state, state, sizeof(int)*GRID_SIZE*GRID_SIZE, cudaMemcpyHostToDevice);
-    update_next_state<<<1,grid>>>(dev_state, dev_next_state);
-
-    cudaMemcpy(next_state, dev_next_state, sizeof(int)*GRID_SIZE*GRID_SIZE, cudaMemcpyDeviceToHost);
+    start_time = (float)clock()/CLOCKS_PER_SEC;
+    for (i=0;i<1000;i++) {
+        update_next_state<<<1,grid>>>(dev_state, dev_next_state);
+        cudaMemcpy(next_state, dev_next_state, sizeof(int)*GRID_SIZE*GRID_SIZE, cudaMemcpyDeviceToHost);
+        set_state_as_next(state, next_state);
+    }
+    end_time = (float)clock()/CLOCKS_PER_SEC;
     render_state(next_state);
     cudaFree(dev_state);
     cudaFree(dev_next_state);
+    printf("Simulation took %f seconds\n", end_time-start_time);
     return 0;
 }
