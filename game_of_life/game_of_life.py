@@ -63,10 +63,13 @@ def render_state(state: np.ndarray) -> None:
 def main() -> None:
     state = np.zeros((N_ROWS, N_COLS))
     set_initial_state(state)
-    while True:
+    start = time.monotonic()
+    for _ in range(1000):
         state = get_next_state(state)
-        render_state(state)
-        time.sleep(DELAY)
+        # render_state(state)
+        # time.sleep(DELAY)
+    end = time.monotonic()
+    print(f"Simulation took {end-start} seconds.")
 
 
 if __name__ == "__main__":
