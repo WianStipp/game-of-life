@@ -88,8 +88,8 @@ int main(void) {
     int i;
     float start_time, end_time;
     set_blank_state(state);
-    set_blinker(state);
-    // set_interesting_state(state);
+    // set_blinker(state);
+    set_interesting_state(state);
     render_state(state);
 
     start_time = (float)clock()/CLOCKS_PER_SEC;
@@ -102,6 +102,5 @@ int main(void) {
     end_time = (float)clock()/CLOCKS_PER_SEC;
     render_state(next_state);
     printf("Simulation took %f seconds\n", end_time-start_time);
-
     return 0;
 }
