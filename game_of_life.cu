@@ -15,7 +15,7 @@ __device__ int count_neighbors(int a[GRID_SIZE][GRID_SIZE], int x, int y)
         {
             if ((x + i >= 0) && (x + i < GRID_SIZE) && (y + j >= 0) && (y + j < GRID_SIZE))
             {
-                sum = sum + a[x + i][y + j];
+                sum += a[x + i][y + j];
             }
         }
     }
@@ -75,8 +75,8 @@ void set_blinker(int state[GRID_SIZE][GRID_SIZE])
 void set_interesting_state(int state[GRID_SIZE][GRID_SIZE])
 {
     state[5][5] = 1;
-    state[6][5] = 1;
     state[5][6] = 1;
+    state[6][5] = 1;
     state[5][7] = 1;
     state[4][6] = 1;
 }
