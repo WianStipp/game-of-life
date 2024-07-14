@@ -8,3 +8,6 @@
 | Python            |   ...   | ~ 62.17 |
 | C                 |   ...   | 2.58   |
 | CUDA              |   ...   | 1.78   |
+| CUDA no memcpy*   |   ...   | 0.88   |
+
+CUDA no memcpy* - No memory copy from GPU to CPU at each step.
