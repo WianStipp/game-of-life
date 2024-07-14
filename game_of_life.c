@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <time.h>
 
-#define NUM_ROWS 10
-#define NUM_COLS 10
+#define NUM_ROWS 32
+#define NUM_COLS 32
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
@@ -25,7 +25,7 @@ void update_next_state(int a[NUM_ROWS][NUM_COLS], int next_state[NUM_ROWS][NUM_C
     for (x=0;x<NUM_ROWS;x++) {
         for (y=0;y<NUM_COLS;y++) {
             num_neighbors = count_neighbors(a, x, y);
-            if (num_neighbors < 2) {
+            if ((num_neighbors < 2) || (num_neighbors > 3)) {
                 next_state[x][y] = 0;
             }
             else if (num_neighbors == 3) {
@@ -43,6 +43,15 @@ void set_blinker(int a[NUM_ROWS][NUM_COLS]) {
     a[5][5] = 1;
     a[5][6] = 1;
 }
+
+void set_interesting_state(int state[NUM_ROWS][NUM_COLS]) {
+    state[5][5] = 1;
+    state[5][6] = 1;
+    state[6][5] = 1;
+    state[5][7] = 1;
+    state[4][6] = 1;
+}
+
 
 void set_blank_state(int a[NUM_ROWS][NUM_COLS]) {
     int i,j;
@@ -80,16 +89,18 @@ int main(void) {
     float start_time, end_time;
     set_blank_state(state);
     set_blinker(state);
+    // set_interesting_state(state);
     render_state(state);
 
     start_time = (float)clock()/CLOCKS_PER_SEC;
-    for (i=0;i<1000000;i++) {
+    for (i=0;i<100001;i++) {
         update_next_state(state, next_state);
         // render_state(next_state);
         set_state_as_next(state, next_state);
         // printf("\n");
     }
     end_time = (float)clock()/CLOCKS_PER_SEC;
+    render_state(next_state);
     printf("Simulation took %f seconds\n", end_time-start_time);
 
     return 0;
